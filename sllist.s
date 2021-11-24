@@ -21,6 +21,7 @@ input:
 	.text
 main:
 
+
 print:					#Parameters: a0-cstring
 	li	$v0, 4			#Prints out a given string
 	syscall
@@ -72,11 +73,11 @@ traverse:				#Parameters: address-list, address-proc
 endif:
 	sub	$sp, $sp, 8
 	sw	$ra, ($sp)
-	sw	$a0, 4($sp)
-	addi	$a0, $a0, 4
+	sw	$a0, 4($sp)		#Save data and current address onto stack
+	addi	$a0, $a0, 4	#Gives the address of the next node
 	jal	traverse
 	lw	$a0, 4($sp)
-	jalr	$a1
+	jalr	$a1			#Print out the data
 	lw	$ra, ($sp)
 	addi $sp, $sp, 8
 	jr	$ra
