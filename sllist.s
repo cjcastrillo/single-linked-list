@@ -35,11 +35,11 @@ strdup:					#Parameters: a0-cstring
 	addi	$sp, $sp, 4
 	move	$a0, $v0
 	addi	$a0, $a0, 1	#Include the null byte of the string
-	subu	$sp, $sp, 4
-	sw	$ra, ($sp)
-	jal	malloc			#Create space in heap for string
-	lw	$ra, ($sp)
-	addi	$sp, $sp, 4
+	li	$v0, 9
+	addi	$a0, $a0, 3
+	srl	$a0, $a0, 2
+	sll	$a0, $a0, 2		#Convert the length into a multiple of 4 to make space on heap
+	syscall
 	move	$s1, $v0
 	move	$s2, $zero
 dowhile:				#Copy the string character by character into the heap
