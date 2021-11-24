@@ -54,14 +54,6 @@ enddw:
 	move	$v0, $s1
 	jr	$ra
 
-malloc:					#Parameters: a0-int
-	li	$v0, 9			#Given a certain number of bits, make space for it in the heap
-	addi	$a0, $a0, 3
-	srl	$a0, $a0, 2
-	sll	$a0, $a0, 2		#Converts the bits given into a multiple of 4
-	syscall
-	jr	$ra
-
 strlen:					#Parameters: a0-cstring
 	move	$s0, $zero	#Returns the number of characters up to the null byte
 while:
