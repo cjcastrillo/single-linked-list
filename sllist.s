@@ -22,12 +22,12 @@ input:
 main:
 
 
-print:					#Parameters: a0-cstring
-	li	$v0, 4			#Prints out a given string
+print:				#Parameters: a0-cstring
+	li	$v0, 4		#Prints out a given string
 	syscall
 	jr	$ra
 
-strdup:					#Parameters: a0-cstring
+strdup:				#Parameters: a0-cstring
 	move	$s7, $a0	#Duplicates a string into the heap
 	subu	$sp, $sp, 4
 	sw	$ra, ($sp)
@@ -39,11 +39,11 @@ strdup:					#Parameters: a0-cstring
 	li	$v0, 9
 	addi	$a0, $a0, 3
 	srl	$a0, $a0, 2
-	sll	$a0, $a0, 2		#Convert the length into a multiple of 4 to make space on heap
+	sll	$a0, $a0, 2	#Convert the length into a multiple of 4 to make space on heap
 	syscall
 	move	$s1, $v0
 	move	$s2, $zero
-dowhile:				#Copy the string character by character into the heap
+dowhile:			#Copy the string character by character into the heap
 	add	$s3, $s2, $s7 
 	lb	$s4, ($s3)
 	add	$s5, $s2, $s1
@@ -55,7 +55,7 @@ enddw:
 	move	$v0, $s1
 	jr	$ra
 
-strlen:					#Parameters: a0-cstring
+strlen:				#Parameters: a0-cstring
 	move	$s0, $zero	#Returns the number of characters up to (not including) the null byte
 while:
 	add	$s3, $a0, $s0
@@ -67,26 +67,26 @@ endwhile:
 	move	$v0, $s0
 	jr	$ra
 
-traverse:				#Parameters: address-list, address-proc
+traverse:			#Parameters: address-list, address-proc
 	bnez	$a0, endif	#Traverses the list in reverse order and performs the procedure proc after traversing
 	jr	$ra
 endif:
 	sub	$sp, $sp, 8
 	sw	$ra, ($sp)
-	sw	$a0, 4($sp)		#Save data and current address onto stack
+	sw	$a0, 4($sp)	#Save data and current address onto stack
 	addi	$a0, $a0, 4	#Gives the address of the next node
 	jal	traverse
 	lw	$a0, 4($sp)
-	jalr	$a1			#Print out the data
+	jalr	$a1		#Print out the data
 	lw	$ra, ($sp)
 	addi $sp, $sp, 8
 	jr	$ra
 
-addnode:				#Parameters: address-data, address-next
+addnode:			#Parameters: address-data, address-next
 	move	$s0, $a0	#Allocate space in the heap for a node with its data and address to next node
 	li	$v0, 9
 	la	$a0, 4*2
 	syscall
-	sw	$s0, ($v0)		#Move data into node
+	sw	$s0, ($v0)	#Move data into node
 	sw	$a1, 4($v0) 	#Move address for the next node into node
 	jr $ra
