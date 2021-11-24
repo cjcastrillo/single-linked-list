@@ -13,32 +13,36 @@ intro:
 	.asciiz	"Link List by C. Castrillo\n\n"
 prompt:
 	.asciiz	"Enter text? "
+head:
+	.word	0
+input:
+	.space	30
 
 	.text
 main:
 
 puts:					#Parameters: a0-cstring
-	li	$v0, 4
+	li	$v0, 4			#Prints out a given string
 	syscall
 	jr	$ra
 
 strdup:					#Parameters: a0-cstring
-	move	$s7, $a0
+	move	$s7, $a0	#Duplicates a string into the heap
 	subu	$sp, $sp, 4
 	sw	$ra, ($sp)
 	jal	strlen
 	lw	$ra, ($sp)
 	addi	$sp, $sp, 4
 	move	$a0, $v0
-	addi	$a0, $a0, 1
+	addi	$a0, $a0, 1	#Include the null byte of the string
 	subu	$sp, $sp, 4
 	sw	$ra, ($sp)
-	jal	malloc
+	jal	malloc			#Create space in heap for string
 	lw	$ra, ($sp)
 	addi	$sp, $sp, 4
 	move	$s1, $v0
 	move	$s2, $zero
-dowhile:
+dowhile:				#Copy the string character by character into the heap
 	add	$s3, $s2, $s7 
 	lb	$s4, ($s3)
 	add	$s5, $s2, $s1
@@ -51,21 +55,22 @@ enddw:
 	jr	$ra
 
 malloc:					#Parameters: a0-int
-	li	$v0, 9
+	li	$v0, 9			#Given a certain number of bits, make space for it in the heap
 	addi	$a0, $a0, 3
 	srl	$a0, $a0, 2
-	sll	$a0, $a0, 2
+	sll	$a0, $a0, 2		#Converts the bits given into a multiple of 4
 	syscall
 	jr	$ra
 
 strlen:					#Parameters: a0-cstring
-	move	$s0, $zero
+	move	$s0, $zero	#Returns the number of characters up to the null byte
 while:
-	add		$s3, $a0, $s0
-	lb		$s2, ($s3)
+	add	$s3, $a0, $s0
+	lb	$s2, ($s3)
 	beqz	$s2, endwhile
 	addi	$s0, $s0, 1
-	b		while
+	b	while
 endwhile:
 	move	$v0, $s0
-	jr		$ra
+	jr	$ra
+
