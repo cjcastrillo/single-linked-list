@@ -21,7 +21,7 @@ input:
 	.text
 main:
 
-puts:					#Parameters: a0-cstring
+print:					#Parameters: a0-cstring
 	li	$v0, 4			#Prints out a given string
 	syscall
 	jr	$ra
@@ -74,3 +74,8 @@ endwhile:
 	move	$v0, $s0
 	jr	$ra
 
+traverse:				#Parameters: address-list, address-proc
+	jr $ra
+
+addnode:				#Parameters: address-data, address-next
+	jr $ra
