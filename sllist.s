@@ -70,4 +70,10 @@ traverse:				#Parameters: address-list, address-proc
 	jr $ra
 
 addnode:				#Parameters: address-data, address-next
+	move	$s0, $a0	#Allocate space in the heap for a node with its data and address to next node
+	li	$v0, 9
+	la	$a0, 4*2
+	syscall
+	sw	$s0, ($v0)
+	sw	$a1, 4($v0) 
 	jr $ra
