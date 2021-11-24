@@ -55,7 +55,7 @@ enddw:
 	jr	$ra
 
 strlen:					#Parameters: a0-cstring
-	move	$s0, $zero	#Returns the number of characters up to the null byte
+	move	$s0, $zero	#Returns the number of characters up to (not including) the null byte
 while:
 	add	$s3, $a0, $s0
 	lb	$s2, ($s3)
@@ -67,13 +67,25 @@ endwhile:
 	jr	$ra
 
 traverse:				#Parameters: address-list, address-proc
-	jr $ra
+	bnez	$a0, endif	#Traverses the list in reverse order and performs the procedure proc after traversing
+	jr	$ra
+endif:
+	sub	$sp, $sp, 8
+	sw	$ra, ($sp)
+	sw	$a0, 4($sp)
+	addi	$a0, $a0, 4
+	jal	traverse
+	lw	$a0, 4($sp)
+	jalr	$a1
+	lw	$ra, ($sp)
+	addi $sp, $sp, 8
+	jr	$ra
 
 addnode:				#Parameters: address-data, address-next
 	move	$s0, $a0	#Allocate space in the heap for a node with its data and address to next node
 	li	$v0, 9
 	la	$a0, 4*2
 	syscall
-	sw	$s0, ($v0)
-	sw	$a1, 4($v0) 
+	sw	$s0, ($v0)		#Move data into node
+	sw	$a1, 4($v0) 	#Move address for the next node into node
 	jr $ra
