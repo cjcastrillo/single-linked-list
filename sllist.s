@@ -24,6 +24,7 @@ main:
 	la	$a0, intro
 	syscall
 loop:
+	li	$v0, 4
 	la	$a0, prompt
 	syscall
 	la	$a0, input
