@@ -36,8 +36,11 @@ loop:
 	la	$a0, input
 	la	$a1, head
 	jal	addnode
+	sw	$v0, head
 	b	loop
 end:
+	la	$a0, head
+	la	$a1, print
 	jal	traverse
 	li	$v0, 10
 	syscall
@@ -88,13 +91,14 @@ endwhile:
 	jr	$ra
 
 traverse:			#Parameters: address-list, address-proc
-	bnez	$a0, endif	#Traverses the list in reverse order and performs the procedure proc after traversing
+	lw	$t0, ($a0)	#Traverses the list in reverse order and performs the procedure proc after traversing
+	bnez	$t0, endif
 	jr	$ra
 endif:
 	sub	$sp, $sp, 8
 	sw	$ra, ($sp)
 	sw	$a0, 4($sp)	#Save data and current address onto stack
-	addi	$a0, $a0, 4	#Gives the address of the next node
+	addi	$a0, $a0, 4	#Traverse using the address of the next node
 	jal	traverse
 	lw	$a0, 4($sp)
 	jalr	$a1		#Print out the data
@@ -107,6 +111,6 @@ addnode:			#Parameters: address-data, address-next
 	li	$v0, 9
 	li	$a0, 8
 	syscall
-	sw	$s0, ($v0)	#Move data into node
+	sw	$s0, ($v0)	#Move data address into node
 	sw	$a1, 4($v0) 	#Move address for the next node into node
 	jr	$ra
