@@ -35,7 +35,7 @@ loop:
 	la	$a0, input
 	la	$a1, head
 	jal	addnode
-	b	loop	
+	b	loop
 end:
 	jal	traverse
 	li	$v0, 10
@@ -104,7 +104,7 @@ endif:
 addnode:			#Parameters: address-data, address-next
 	move	$s0, $a0	#Allocate space in the heap for a node with its data and address to next node
 	li	$v0, 9
-	la	$a0, 4*2
+	li	$a0, 8
 	syscall
 	sw	$s0, ($v0)	#Move data into node
 	sw	$a1, 4($v0) 	#Move address for the next node into node
