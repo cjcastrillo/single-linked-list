@@ -31,17 +31,21 @@ loop:
 	li	$a1, 30
 	li	$v0, 8
 	syscall
-	lb	$t0, input
+	lb	$t0, ($a0)
 	beq	$t0, 0xa, end	#Check if user provided string does not consist of only a new line
-	la	$a0, input
+	jal	strdup
+	move	$a0, $v0
 	la	$a1, head
 	jal	addnode
-	sw	$v0, head
 	b	loop
 end:
-	la	$a0, head
+	li	$a0, '\n'
+	li	$v0, 11
+	syscall
+	lw	$a0, head
 	la	$a1, print
 	jal	traverse
+	sw	$zero, head	#Reset the head so it doesn't print out lines from previous attempts
 	li	$v0, 10
 	syscall
 
@@ -91,14 +95,14 @@ endwhile:
 	jr	$ra
 
 traverse:			#Parameters: address-list, address-proc
-	lw	$t0, ($a0)	#Traverses the list in reverse order and performs the procedure proc after traversing
-	bnez	$t0, endif
+	bnez	$a0, endif	#Traverses the list in reverse order and performs the procedure proc after traversing
 	jr	$ra
 endif:
 	sub	$sp, $sp, 8
 	sw	$ra, ($sp)
-	sw	$a0, 4($sp)	#Save data and current address onto stack
-	addi	$a0, $a0, 4	#Traverse using the address of the next node
+	lw	$t0, ($a0)
+	sw	$t0, 4($sp)	#Save data and current address onto stack
+	lw	$a0, 4($a0)	#Traverse using the address of the next node
 	jal	traverse
 	lw	$a0, 4($sp)
 	jalr	$a1		#Print out the data
@@ -112,5 +116,7 @@ addnode:			#Parameters: address-data, address-next
 	li	$a0, 8
 	syscall
 	sw	$s0, ($v0)	#Move data address into node
+	lw	$a1, head
 	sw	$a1, 4($v0) 	#Move address for the next node into node
+	sw	$v0, head
 	jr	$ra
