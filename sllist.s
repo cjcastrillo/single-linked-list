@@ -20,7 +20,26 @@ input:
 
 	.text
 main:
-
+	li	$v0, 4
+	la	$a0, intro
+	syscall
+loop:
+	la	$a0, prompt
+	syscall
+	la	$a0, input
+	li	$a1, 30
+	li	$v0, 8
+	syscall
+	lb	$t0, input
+	beq	$t0, 0xa, end	#Check if user provided string does not consist of only a new line
+	la	$a0, input
+	la	$a1, head
+	jal	addnode
+	b	loop	
+end:
+	jal	traverse
+	li	$v0, 10
+	syscall
 
 print:				#Parameters: a0-cstring
 	li	$v0, 4		#Prints out a given string
@@ -79,7 +98,7 @@ endif:
 	lw	$a0, 4($sp)
 	jalr	$a1		#Print out the data
 	lw	$ra, ($sp)
-	addi $sp, $sp, 8
+	addi	$sp, $sp, 8
 	jr	$ra
 
 addnode:			#Parameters: address-data, address-next
@@ -89,4 +108,4 @@ addnode:			#Parameters: address-data, address-next
 	syscall
 	sw	$s0, ($v0)	#Move data into node
 	sw	$a1, 4($v0) 	#Move address for the next node into node
-	jr $ra
+	jr	$ra
